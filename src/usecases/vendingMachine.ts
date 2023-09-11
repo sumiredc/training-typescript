@@ -3,7 +3,7 @@ export class VendingMachine {
     private internalBalance:number=0
 
     post(coin:number){
-        this.internalBalance+=coin;
+        this.internalBalance += coin;
     }
 
     get balance(){
