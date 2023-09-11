@@ -7,9 +7,12 @@ describe('vendingMachine', () => {
     vm = new VendingMachine();
   });
 
-  it('10円を投入', () => {
+  it('各種お金を投入', () => {
     vm.post(10)
-    expect(vm.balance).toBe(10);
+    vm.post(50)
+    vm.post(100)
+    vm.post(1000)
+    expect(vm.balance).toBe(1160);
     
   });
 
