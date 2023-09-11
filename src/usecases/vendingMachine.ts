@@ -1,21 +1,22 @@
 export class VendingMachine {
-    
-    private internalBalance:number=0
+  private internalBalance: number = 0;
+  private validCoin: number[] = [10, 50, 100, 500, 1000];
 
-    post(coin:number){
-        this.internalBalance += coin;
+  post(coin: number) {
+    if (this.validCoin.includes(coin)) {
+      this.internalBalance += coin;
+    } else {
+      return coin;
     }
+  }
 
-    get balance(){
-        return this.internalBalance
-    }
+  get balance() {
+    return this.internalBalance;
+  }
 
-    refund(){
-        const change:number=this.internalBalance
-        this.internalBalance=0
-        return change
-
-
-    }
-
+  refund() {
+    const change: number = this.internalBalance;
+    this.internalBalance = 0;
+    return change;
+  }
 }
