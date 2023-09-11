@@ -21,3 +21,20 @@ $ npm run test {ファイル名}
 - Prettier
 - Jest
 - Jest Runner
+
+
+## Windows(WSL)セットアップ方法
+
+### Node.jsのインストール（Voltaの利用）
+
+```
+$ curl https://get.volta.sh | bash
+$ export VOLTA_HOME="$HOME/.volta"
+$ export PATH="$VOLTA_HOME/bin:$PATH"
+$ source ~/.bashrc
+$ volta -v
+$ volta install node@18
+$ volta list
+```
+
+
