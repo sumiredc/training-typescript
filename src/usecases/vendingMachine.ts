@@ -1,4 +1,5 @@
 import {MoneyType} from './money';
+import {Juice} from './juice';
 
 const validMoney: MoneyType[] = [
   MoneyType.TEN,
@@ -9,11 +10,19 @@ const validMoney: MoneyType[] = [
 ];
 
 export class VendingMachine {
-  private internalBalance: number = 0;
+  private internalBalance: number;
+  private internalStocks: Juice[] = [];
+  COKE = new Juice('コーラ', 120, 5);
 
-  post(money: MoneyType) {
+  constructor(balance: number) {
+    this.internalBalance = balance;
+    this.internalStocks.push(this.COKE);
+  }
+
+  post(money: MoneyType): number {
     if (validMoney.includes(money)) {
       this.internalBalance += money;
+      return 0;
     } else {
       return money;
     }
@@ -27,5 +36,8 @@ export class VendingMachine {
     const change: number = this.internalBalance;
     this.internalBalance = 0;
     return change;
+  }
+  get stocks(): any {
+    return this.internalStocks;
   }
 }
