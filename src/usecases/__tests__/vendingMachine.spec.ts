@@ -1,11 +1,13 @@
 import {VendingMachine} from '../vendingMachine';
 import {MoneyType} from '../money';
+import {JuiceType} from '../juiceType';
 
 describe('vendingMachine', () => {
   let vm!: VendingMachine;
 
   beforeEach(() => {
     // テスト前にVendingMachineのインスタンスを作成する
+
     vm = new VendingMachine(0, 0);
   });
 
@@ -68,14 +70,12 @@ describe('vendingMachine', () => {
   });
 
   it('自販機内に格納される飲み物の情報を取得する', () => {
-    expect(vm.stocks).toEqual([
-      {internalName: 'コーラ', internalPrice: 120, internalStock: 5},
-    ]);
+    expect(vm.stockInfo).toEqual(['name:コーラ price:120 stock:5']);
   });
 
   it('コーラを購入する', () => {
     vm.post(MoneyType.FIVE_HUNDRED);
-    vm.buying('コーラ');
+    vm.buying(JuiceType.COKE);
     expect(vm.balance).toBe(380);
     expect(vm.earning).toBe(120);
     expect(vm.stocks).toEqual([
