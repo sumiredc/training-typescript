@@ -1,5 +1,6 @@
 import {MoneyType} from './money';
 import {Juice} from './juice';
+import {JuiceType} from './juiceType';
 
 const validMoney: MoneyType[] = [
   MoneyType.TEN,
@@ -13,14 +14,12 @@ export class VendingMachine {
   private internalBalance: number;
   private internalEarning: number;
 
-  private internalStocks: Juice[] = [];
-
-  COKE = new Juice('コーラ', 120, 5);
+  private internalStocks = new Map<JuiceType, Juice>();
 
   constructor(balance: number, earn: number) {
     this.internalBalance = balance;
     this.internalEarning = earn;
-    this.internalStocks.push(this.COKE);
+    this.internalStocks.set(JuiceType.COKE, new Juice('コーラ', 120, 5));
   }
 
   post(money: MoneyType): number {
@@ -46,18 +45,28 @@ export class VendingMachine {
     return change;
   }
 
-  get stocks(): any {
+  get stocks() {
     return this.internalStocks;
   }
 
-  buying(juice: string) {
+  stockInfo() {
+    // const stockInfo: string[] = [];
+    // for (const [key, value] of this.internalStocks) {
+    //   stockInfo.push(value.juiceInfo());
+    // }
+    // return stockInfo;
+    return this.internalStocks.get(JuiceType.COKE)?.price;
+  }
+
+  buying(juice: JuiceType) {
     if (
-      this.balance >= this.stocks[juice].price &&
-      this.stocks[juice].stock >= 1
+      this.balance >= this.stocks.get(juice).price &&
+      this.stocks.get(juice).stocks >= 1
     ) {
-      this.stocks[juice].stock -= 1;
-      this.internalBalance -= this.stocks[juice].price;
-      this.internalEarning += this.stocks[juice].price;
-    }
+    this.internalStocks.get(juice).stock -= 1;
+    this.internalBalance -= juice;
+    this.internalEarning += juice;
+    // }
+    // return 0;
   }
 }
