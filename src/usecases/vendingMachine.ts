@@ -1,20 +1,29 @@
+import {MoneyType} from './money';
+
+const validMoney: MoneyType[] = [
+  MoneyType.TEN,
+  MoneyType.FIFTY,
+  MoneyType.HUNDRED,
+  MoneyType.FIVE_HUNDRED,
+  MoneyType.THOUSAND,
+];
+
 export class VendingMachine {
   private internalBalance: number = 0;
-  private validCoin: number[] = [10, 50, 100, 500, 1000];
 
-  post(coin: number) {
-    if (this.validCoin.includes(coin)) {
-      this.internalBalance += coin;
+  post(money: MoneyType) {
+    if (validMoney.includes(money)) {
+      this.internalBalance += money;
     } else {
-      return coin;
+      return money;
     }
   }
 
-  get balance() {
+  get balance(): number {
     return this.internalBalance;
   }
 
-  refund() {
+  refund(): number {
     const change: number = this.internalBalance;
     this.internalBalance = 0;
     return change;
