@@ -11,11 +11,15 @@ const validMoney: MoneyType[] = [
 
 export class VendingMachine {
   private internalBalance: number;
+  private internalEarning: number;
+
   private internalStocks: Juice[] = [];
+
   COKE = new Juice('コーラ', 120, 5);
 
-  constructor(balance: number) {
+  constructor(balance: number, earn: number) {
     this.internalBalance = balance;
+    this.internalEarning = earn;
     this.internalStocks.push(this.COKE);
   }
 
@@ -32,12 +36,28 @@ export class VendingMachine {
     return this.internalBalance;
   }
 
+  get earning(): number {
+    return this.internalEarning;
+  }
+
   refund(): number {
     const change: number = this.internalBalance;
     this.internalBalance = 0;
     return change;
   }
+
   get stocks(): any {
     return this.internalStocks;
+  }
+
+  buying(juice: string) {
+    if (
+      this.balance >= this.stocks[juice].price &&
+      this.stocks[juice].stock >= 1
+    ) {
+      this.stocks[juice].stock -= 1;
+      this.internalBalance -= this.stocks[juice].price;
+      this.internalEarning += this.stocks[juice].price;
+    }
   }
 }

@@ -6,7 +6,7 @@ describe('vendingMachine', () => {
 
   beforeEach(() => {
     // テスト前にVendingMachineのインスタンスを作成する
-    vm = new VendingMachine(0);
+    vm = new VendingMachine(0, 0);
   });
 
   it('10円を投入', () => {
@@ -69,7 +69,17 @@ describe('vendingMachine', () => {
 
   it('自販機内に格納される飲み物の情報を取得する', () => {
     expect(vm.stocks).toEqual([
-      {internalName: 'コーラ', internalPrice: 120, internalStocks: 5},
+      {internalName: 'コーラ', internalPrice: 120, internalStock: 5},
+    ]);
+  });
+
+  it('コーラを購入する', () => {
+    vm.post(MoneyType.FIVE_HUNDRED);
+    vm.buying('コーラ');
+    expect(vm.balance).toBe(380);
+    expect(vm.earning).toBe(120);
+    expect(vm.stocks).toEqual([
+      {internalName: 'コーラ', internalPrice: 120, internalStock: 5},
     ]);
   });
 });

@@ -1,14 +1,14 @@
 export class Juice {
   private internalName: string;
   private internalPrice: number;
-  private internalStocks: number;
+  private internalStock: number;
 
-  constructor(name: string, price: number, stocks: number) {
+  constructor(name: string, price: number, stock: number) {
     this.internalName = name;
 
     this.internalPrice = price;
 
-    this.internalStocks = stocks;
+    this.internalStock = stock;
   }
 
   get name(): string {
@@ -20,6 +20,6 @@ export class Juice {
   }
 
   get stocks(): number {
-    return this.internalStocks;
+    return this.internalStock;
   }
 }
