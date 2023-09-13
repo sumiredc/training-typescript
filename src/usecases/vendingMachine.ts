@@ -1,6 +1,6 @@
-import {MoneyType} from './money';
-import {Juice} from './juice';
-import {JuiceType} from './juiceType';
+import { MoneyType } from './money';
+import { Juice } from './juice';
+import { JuiceType } from './juiceType';
 
 const validMoney: MoneyType[] = [
   MoneyType.TEN,
@@ -35,8 +35,16 @@ export class VendingMachine {
     return this.internalBalance;
   }
 
+  set balance(balance: number) {
+    this.internalBalance = balance;
+  }
+
   get earning(): number {
     return this.internalEarning;
+  }
+
+  set earning(earning: number) {
+    this.internalEarning = earning;
   }
 
   refund(): number {
@@ -49,24 +57,22 @@ export class VendingMachine {
     return this.internalStocks;
   }
 
-  stockInfo() {
-    // const stockInfo: string[] = [];
-    // for (const [key, value] of this.internalStocks) {
-    //   stockInfo.push(value.juiceInfo());
-    // }
-    // return stockInfo;
-    return this.internalStocks.get(JuiceType.COKE)?.price;
+  stocksInfo() {
+    const stocksInfo: string[] = [];
+    for (const [key, value] of this.internalStocks) {
+      stocksInfo.push(value.juiceInfo());
+    }
+    return stocksInfo;
   }
 
-  buying(juice: JuiceType) {
-    if (
-      this.balance >= this.stocks.get(juice).price &&
-      this.stocks.get(juice).stocks >= 1
-    ) {
-    this.internalStocks.get(juice).stock -= 1;
-    this.internalBalance -= juice;
-    this.internalEarning += juice;
-    // }
-    // return 0;
+  buying(juice: JuiceType): number {
+    const selectedJuice = this.stocks.get(juice);
+
+    if (this.balance >= selectedJuice!.price && selectedJuice!.quantity >= 1) {
+      this.internalStocks.get(juice)!.quantity -= 1;
+      this.balance -= selectedJuice!.price;
+      this.earning += selectedJuice!.price;
+    }
+    return 0;
   }
 }
