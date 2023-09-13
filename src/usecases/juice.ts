@@ -1,14 +1,14 @@
 export class Juice {
   private internalName: string;
   private internalPrice: number;
-  private internalStock: number;
+  private Quantity: number;
 
-  constructor(name: string, price: number, stock: number) {
+  constructor(name: string, price: number, quantity: number) {
     this.internalName = name;
 
     this.internalPrice = price;
 
-    this.internalStock = stock;
+    this.Quantity = quantity;
   }
 
   get name(): string {
@@ -19,8 +19,8 @@ export class Juice {
     return this.internalPrice;
   }
 
-  get stock(): number {
-    return this.internalStock;
+  get quantity(): number {
+    return this.Quantity;
   }
 
   set name(name: string) {
@@ -31,13 +31,13 @@ export class Juice {
     this.internalPrice = price;
   }
 
-  set stock(stock: number) {
-    this.internalStock = stock;
+  set quantity(quantity: number) {
+    this.Quantity = quantity;
   }
 
   juiceInfo(): string {
     return (
-      'name:' + this.name + ' price:' + this.price + ' stock:' + this.stock
+      'name:' + this.name + ' price:' + this.price + ' stock:' + this.quantity
     );
   }
 }
