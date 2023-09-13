@@ -1,6 +1,6 @@
-import { MoneyType } from './money';
+import { MoneyType } from '../domein/objects/moneyType';
 import { Juice } from './juice';
-import { JuiceType } from './juiceType';
+import { JuiceType } from '../domein/objects/juiceType';
 
 const validMoney: MoneyType[] = [
   MoneyType.TEN,

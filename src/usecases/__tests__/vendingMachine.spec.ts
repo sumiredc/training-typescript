@@ -1,6 +1,6 @@
 import { VendingMachine } from '../vendingMachine';
-import { MoneyType } from '../money';
-import { JuiceType } from '../juiceType';
+import { MoneyType } from '../../domein/objects/moneyType';
+import { JuiceType } from '../../domein/objects/juiceType';
 
 describe('vendingMachine', () => {
   let vm!: VendingMachine;
