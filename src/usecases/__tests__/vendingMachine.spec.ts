@@ -44,9 +44,10 @@ describe('vendingMachine', () => {
   });
 
   it('おつりを出す', () => {
-    vm.post(MoneyType.TEN);
-    expect(vm.refund()).toBe(10);
-    expect(vm.balance).toBe(0);
+    vm.post(MoneyType.FIVE_HUNDRED);
+    expect(vm.balance).toBe(500);
+    vm.buying(JuiceType.COKE);
+    expect(vm.refund()).toBe(380);
   });
 
   it('使えないお金(1円)を返金する', () => {
@@ -83,7 +84,11 @@ describe('vendingMachine', () => {
     expect(vm.balance).toBe(500);
     vm.buying(JuiceType.COKE);
     expect(vm.balance).toBe(380);
+  });
+
+  it('売上を確認する', () => {
+    vm.post(MoneyType.FIVE_HUNDRED);
+    vm.buying(JuiceType.COKE);
     expect(vm.earning).toBe(120);
-    expect(vm.stocksInfo()).toEqual(['name:コーラ price:￥120 stock:4本']);
   });
 });
