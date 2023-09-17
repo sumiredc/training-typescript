@@ -1,5 +1,5 @@
 import { MoneyType } from '../domein/objects/moneyType';
-import { Juice } from './juice';
+import { Juice } from '../domein/entities/juice';
 import { JuiceType } from '../domein/objects/juiceType';
 
 const validMoney: MoneyType[] = [
@@ -65,10 +65,19 @@ export class VendingMachine {
     return stocksInfo;
   }
 
+  checkBuyingCondition(juice: JuiceType): boolean {
+    const selectedJuice = this.stocks.get(juice);
+    if (this.balance >= selectedJuice!.price && selectedJuice!.quantity >= 1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   buying(juice: JuiceType): number {
     const selectedJuice = this.stocks.get(juice);
 
-    if (this.balance >= selectedJuice!.price && selectedJuice!.quantity >= 1) {
+    if (this.checkBuyingCondition(juice)) {
       this.internalStocks.get(juice)!.quantity -= 1;
       this.balance -= selectedJuice!.price;
       this.earning += selectedJuice!.price;
