@@ -78,9 +78,18 @@ describe('vendingMachine', () => {
     ]);
   });
 
-  it('コーラが買えるかどうか判断する', () => {
-    vm.post(MoneyType.FIVE_HUNDRED);
-    expect(vm.checkBuyingCondition(JuiceType.COKE)).toEqual(true);
+  // it('コーラが買えるかどうか判断する', () => {
+  //   vm.post(MoneyType.FIVE_HUNDRED);
+  //   expect(vm.checkBuyingCondition(JuiceType.COKE)).toEqual(true);
+  // });
+
+  it('購入可能なドリンクのリストを取得する', () => {
+    vm.post(MoneyType.HUNDRED);
+    vm.post(MoneyType.FIFTY);
+    expect(vm.acquireBuyableList()).toEqual([
+      'name:コーラ price:￥120 stock:5本',
+      'name:水 price:￥100 stock:5本',
+    ]);
   });
 
   it('コーラを購入する', () => {
@@ -88,6 +97,11 @@ describe('vendingMachine', () => {
     expect(vm.balance).toBe(500);
     vm.buying(JuiceType.COKE);
     expect(vm.balance).toBe(380);
+    expect(vm.stocksInfo()).toEqual([
+      'name:コーラ price:￥120 stock:4本',
+      'name:レッドブル price:￥200 stock:5本',
+      'name:水 price:￥100 stock:5本',
+    ]);
   });
 
   it('売上を確認する', () => {

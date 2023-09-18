@@ -67,20 +67,30 @@ export class VendingMachine {
     return stocksInfo;
   }
 
-  checkBuyingCondition(juice: JuiceType): boolean {
-    const selectedJuice = this.stocks.get(juice);
-    if (this.balance >= selectedJuice!.price && selectedJuice!.quantity >= 1) {
+  checkBuyableDrink(juice: Juice): boolean {
+    if (this.balance >= juice.price && juice.quantity >= 1) {
       return true;
     } else {
       return false;
     }
   }
 
+  acquireBuyableList() {
+    let BuyableList: string[] = [];
+    for (const [key, value] of this.stocks) {
+      if (this.checkBuyableDrink(value)) {
+        BuyableList.push(value.juiceInfo());
+      }
+    }
+
+    return BuyableList;
+  }
+
   buying(juice: JuiceType): number {
     const selectedJuice = this.stocks.get(juice);
 
-    if (this.checkBuyingCondition(juice)) {
-      this.internalStocks.get(juice)!.quantity -= 1;
+    if (this.checkBuyableDrink(selectedJuice!)) {
+      selectedJuice!.quantity -= 1;
       this.balance -= selectedJuice!.price;
       this.earning += selectedJuice!.price;
     }
