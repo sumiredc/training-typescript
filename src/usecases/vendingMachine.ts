@@ -20,6 +20,8 @@ export class VendingMachine {
     this.internalBalance = balance;
     this.internalEarning = earn;
     this.internalStocks.set(JuiceType.COKE, new Juice('コーラ', 120, 5));
+    this.internalStocks.set(JuiceType.REDBULL, new Juice('レッドブル', 200, 5));
+    this.internalStocks.set(JuiceType.WATER, new Juice('水', 100, 5));
   }
 
   post(money: MoneyType): number {

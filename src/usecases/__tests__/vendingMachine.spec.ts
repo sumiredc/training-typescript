@@ -71,7 +71,11 @@ describe('vendingMachine', () => {
   });
 
   it('自販機内に格納される飲み物の情報を取得する', () => {
-    expect(vm.stocksInfo()).toEqual(['name:コーラ price:￥120 stock:5本']);
+    expect(vm.stocksInfo()).toEqual([
+      'name:コーラ price:￥120 stock:5本',
+      'name:レッドブル price:￥200 stock:5本',
+      'name:水 price:￥100 stock:5本',
+    ]);
   });
 
   it('コーラが買えるかどうか判断する', () => {
