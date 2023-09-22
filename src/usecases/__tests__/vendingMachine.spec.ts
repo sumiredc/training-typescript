@@ -44,9 +44,10 @@ describe('vendingMachine', () => {
   });
 
   it('おつりを出す', () => {
-    vm.post(MoneyType.TEN);
-    expect(vm.refund()).toBe(10);
-    expect(vm.balance).toBe(0);
+    vm.post(MoneyType.FIVE_HUNDRED);
+    expect(vm.balance).toBe(500);
+    vm.buying(JuiceType.COKE);
+    expect(vm.refund()).toBe(380);
   });
 
   it('使えないお金(1円)を返金する', () => {
@@ -70,7 +71,20 @@ describe('vendingMachine', () => {
   });
 
   it('自販機内に格納される飲み物の情報を取得する', () => {
-    expect(vm.stocksInfo()).toEqual(['name:コーラ price:￥120 stock:5本']);
+    expect(vm.stocksInfo()).toEqual([
+      'name:コーラ price:￥120 stock:5本',
+      'name:レッドブル price:￥200 stock:5本',
+      'name:水 price:￥100 stock:5本',
+    ]);
+  });
+
+  it('購入可能なドリンクのリストを取得する', () => {
+    vm.post(MoneyType.HUNDRED);
+    vm.post(MoneyType.FIFTY);
+    expect(vm.acquireBuyableList()).toEqual([
+      'name:コーラ price:￥120 stock:5本',
+      'name:水 price:￥100 stock:5本',
+    ]);
   });
 
   it('コーラが買えるかどうか判断する', () => {
@@ -83,7 +97,16 @@ describe('vendingMachine', () => {
     expect(vm.balance).toBe(500);
     vm.buying(JuiceType.COKE);
     expect(vm.balance).toBe(380);
+    expect(vm.stocksInfo()).toEqual([
+      'name:コーラ price:￥120 stock:4本',
+      'name:レッドブル price:￥200 stock:5本',
+      'name:水 price:￥100 stock:5本',
+    ]);
+  });
+
+  it('売上を確認する', () => {
+    vm.post(MoneyType.FIVE_HUNDRED);
+    vm.buying(JuiceType.COKE);
     expect(vm.earning).toBe(120);
-    expect(vm.stocksInfo()).toEqual(['name:コーラ price:￥120 stock:4本']);
   });
 });
