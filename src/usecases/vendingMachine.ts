@@ -1,6 +1,6 @@
-import { MoneyType } from '../domein/objects/moneyType';
-import { Juice } from '../domein/entities/juice';
-import { JuiceType } from '../domein/objects/juiceType';
+import { MoneyType } from '../domain/objects/moneyType';
+import { Juice } from '../domain/entities/juice';
+import { JuiceType } from '../domain/objects/juiceType';
 
 const validMoney: MoneyType[] = [
   MoneyType.TEN,
@@ -11,14 +11,12 @@ const validMoney: MoneyType[] = [
 ];
 
 export class VendingMachine {
-  private internalBalance: number;
-  private internalEarning: number;
-
   private internalStocks = new Map<JuiceType, Juice>();
 
-  constructor(balance: number, earn: number) {
-    this.internalBalance = balance;
-    this.internalEarning = earn;
+  constructor(
+    private internalBalance: number,
+    private internalEarning: number
+  ) {
     this.internalStocks.set(JuiceType.COKE, new Juice('コーラ', 120, 5));
     this.internalStocks.set(JuiceType.REDBULL, new Juice('レッドブル', 200, 5));
     this.internalStocks.set(JuiceType.WATER, new Juice('水', 100, 5));
@@ -50,7 +48,7 @@ export class VendingMachine {
   }
 
   refund(): number {
-    const change: number = this.internalBalance;
+    const change: number = this.balance;
     this.internalBalance = 0;
     return change;
   }
