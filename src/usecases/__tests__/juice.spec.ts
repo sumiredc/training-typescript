@@ -4,7 +4,7 @@ describe('vendingMachine', () => {
   let ju!: Juice;
 
   beforeEach(() => {
-    // テスト前にVendingMachineのインスタンスを作成する
+    // テスト前にJuiceのインスタンスを作成する
 
     ju = new Juice('コーラ', 120, 5);
   });

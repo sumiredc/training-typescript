@@ -87,6 +87,11 @@ describe('vendingMachine', () => {
     ]);
   });
 
+  it('コーラが買えるかどうか判断する', () => {
+    vm.post(MoneyType.FIVE_HUNDRED);
+    expect(vm.checkBuyingCondition(JuiceType.COKE)).toEqual(true);
+  });
+
   it('コーラを購入する', () => {
     vm.post(MoneyType.FIVE_HUNDRED);
     expect(vm.balance).toBe(500);
