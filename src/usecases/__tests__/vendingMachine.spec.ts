@@ -95,8 +95,8 @@ describe('vendingMachine', () => {
   it('コーラを購入する', () => {
     vm.post(MoneyType.FIVE_HUNDRED);
     expect(vm.balance).toBe(500);
-    vm.buying(JuiceType.COKE);
-    expect(vm.balance).toBe(380);
+    expect(vm.buying(JuiceType.COKE)).toBe(380);
+    expect(vm.balance).toBe(0);
     expect(vm.stocksInfo()).toEqual([
       'name:コーラ price:￥120 stock:4本',
       'name:レッドブル price:￥200 stock:5本',
