@@ -1,8 +1,7 @@
 export class Juice {
   constructor(
     private internalName: string,
-    private internalPrice: number,
-    private internalQuantity: number
+    private internalPrice: number // private internalQuantity: number
   ) {}
 
   get name(): string {
@@ -13,9 +12,9 @@ export class Juice {
     return this.internalPrice;
   }
 
-  get quantity(): number {
-    return this.internalQuantity;
-  }
+  // get quantity(): number {
+  //   return this.internalQuantity;
+  // }
 
   set name(name: string) {
     this.internalName = name;
@@ -25,9 +24,9 @@ export class Juice {
     this.internalPrice = price;
   }
 
-  set quantity(quantity: number) {
-    this.internalQuantity = quantity;
-  }
+  // set quantity(quantity: number) {
+  //   this.internalQuantity = quantity;
+  // }
 
   juiceInfo(): string {
     return (
@@ -37,10 +36,7 @@ export class Juice {
       new Intl.NumberFormat('ja-JP', {
         style: 'currency',
         currency: 'JPY',
-      }).format(this.price) +
-      ' stock:' +
-      this.internalQuantity +
-      '本'
+      }).format(this.price)
     );
   }
 }

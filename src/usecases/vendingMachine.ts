@@ -1,6 +1,6 @@
-import { MoneyType } from '../domein/objects/moneyType';
-import { Juice } from '../domein/entities/juice';
-import { JuiceType } from '../domein/objects/juiceType';
+import { MoneyType } from '../domain/objects/moneyType';
+import { Juice } from '../domain/entities/juice';
+import { JuiceType } from '../domain/objects/juiceType';
 
 const validMoney: MoneyType[] = [
   MoneyType.TEN,
@@ -11,17 +11,26 @@ const validMoney: MoneyType[] = [
 ];
 
 export class VendingMachine {
-  private internalBalance: number;
-  private internalEarning: number;
+  private internalStocks = new Map<
+    JuiceType,
+    { juice: Juice; quantity: number }
+  >();
 
-  private internalStocks = new Map<JuiceType, Juice>();
+  constructor(
+    private internalBalance: number = 0,
+    private internalEarning: number = 0
+  ) {
+    this.addStock(JuiceType.COKE, new Juice('コーラ', 120), 5);
+    this.addStock(JuiceType.REDBULL, new Juice('レッドブル', 200), 5);
+    this.addStock(JuiceType.WATER, new Juice('水', 100), 5);
+  }
 
-  constructor(balance: number, earn: number) {
-    this.internalBalance = balance;
-    this.internalEarning = earn;
-    this.internalStocks.set(JuiceType.COKE, new Juice('コーラ', 120, 5));
-    this.internalStocks.set(JuiceType.REDBULL, new Juice('レッドブル', 200, 5));
-    this.internalStocks.set(JuiceType.WATER, new Juice('水', 100, 5));
+  // 在庫の追加
+  private addStock(juiceType: JuiceType, juice: Juice, quantity: number) {
+    this.internalStocks.set(juiceType, {
+      juice,
+      quantity,
+    });
   }
 
   post(money: MoneyType): number {
@@ -55,40 +64,53 @@ export class VendingMachine {
     return change;
   }
 
-  get stocks() {
+  private get stocks() {
     return this.internalStocks;
   }
 
-  stocksInfo() {
+  // 在庫状況の取得
+  stocksInfo(): string[] {
     const stocksInfo: string[] = [];
-    for (const [key, value] of this.internalStocks) {
-      stocksInfo.push(value.juiceInfo());
+    for (const [_, stock] of this.internalStocks) {
+      stocksInfo.push(this.makeStockInfoRow(stock.juice, stock.quantity));
     }
     return stocksInfo;
   }
 
-  checkBuyableDrink(juice: Juice): boolean {
-    return this.balance >= juice.price && juice.quantity >= 1;
+  // 在庫状況の１行を生成
+  private makeStockInfoRow(juice: Juice, quantity: number): string {
+    return juice.juiceInfo() + ` stock:${quantity}本`;
   }
 
+  checkBuyableDrink(juiceType: JuiceType): boolean {
+    // 指定したドリンクが販売されているかの確認
+    if (!this.internalStocks.has(juiceType)) {
+      return false;
+    }
+    const { juice, quantity } = this.internalStocks.get(juiceType)!;
+
+    return this.balance >= juice.price && quantity >= 1;
+  }
+
+  // 購入可能なジュースの一覧
   acquireBuyableList() {
     const buyableList: string[] = [];
-    for (const [key, value] of this.stocks) {
-      if (this.checkBuyableDrink(value)) {
-        buyableList.push(value.juiceInfo());
+    for (const [juiceType, stock] of this.stocks) {
+      if (this.checkBuyableDrink(juiceType)) {
+        buyableList.push(this.makeStockInfoRow(stock.juice, stock.quantity));
       }
     }
 
     return buyableList;
   }
 
-  buying(juice: JuiceType): number {
-    const selectedJuice = this.stocks.get(juice)!;
+  buying(juiceType: JuiceType): number {
+    const { juice, quantity } = this.stocks.get(juiceType)!;
 
-    if (this.checkBuyableDrink(selectedJuice)) {
-      selectedJuice.quantity -= 1;
-      this.balance -= selectedJuice.price;
-      this.earning += selectedJuice.price;
+    if (this.checkBuyableDrink(juiceType)) {
+      this.stocks.set(juiceType, { juice, quantity: quantity - 1 });
+      this.balance -= juice.price;
+      this.earning += juice.price;
     }
     return this.refund();
   }

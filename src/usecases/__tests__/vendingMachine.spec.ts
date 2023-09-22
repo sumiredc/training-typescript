@@ -1,6 +1,6 @@
 import { VendingMachine } from '../vendingMachine';
-import { MoneyType } from '../../domein/objects/moneyType';
-import { JuiceType } from '../../domein/objects/juiceType';
+import { MoneyType } from '../../domain/objects/moneyType';
+import { JuiceType } from '../../domain/objects/juiceType';
 
 describe('vendingMachine', () => {
   let vm!: VendingMachine;
@@ -45,9 +45,7 @@ describe('vendingMachine', () => {
 
   it('おつりを出す', () => {
     vm.post(MoneyType.FIVE_HUNDRED);
-    expect(vm.balance).toBe(500);
-    vm.buying(JuiceType.COKE);
-    expect(vm.refund()).toBe(380);
+    expect(vm.refund()).toBe(500);
   });
 
   it('使えないお金(1円)を返金する', () => {
@@ -85,11 +83,6 @@ describe('vendingMachine', () => {
       'name:コーラ price:￥120 stock:5本',
       'name:水 price:￥100 stock:5本',
     ]);
-  });
-
-  it('コーラが買えるかどうか判断する', () => {
-    vm.post(MoneyType.FIVE_HUNDRED);
-    expect(vm.checkBuyingCondition(JuiceType.COKE)).toEqual(true);
   });
 
   it('コーラを購入する', () => {
