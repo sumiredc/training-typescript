@@ -67,20 +67,16 @@ export class VendingMachine {
 
   checkBuyingCondition(juice: JuiceType): boolean {
     const selectedJuice = this.stocks.get(juice);
-    if (this.balance >= selectedJuice!.price && selectedJuice!.quantity >= 1) {
-      return true;
-    } else {
-      return false;
-    }
+    return this.balance >= selectedJuice!.price && selectedJuice!.quantity >= 1;
   }
 
   buying(juice: JuiceType): number {
-    const selectedJuice = this.stocks.get(juice);
+    const selectedJuice = this.stocks.get(juice)!;
 
     if (this.checkBuyingCondition(juice)) {
       this.internalStocks.get(juice)!.quantity -= 1;
-      this.balance -= selectedJuice!.price;
-      this.earning += selectedJuice!.price;
+      this.balance -= selectedJuice.price;
+      this.earning += selectedJuice.price;
     }
     return 0;
   }
