@@ -20,6 +20,8 @@ export class VendingMachine {
     this.internalBalance = balance;
     this.internalEarning = earn;
     this.internalStocks.set(JuiceType.COKE, new Juice('コーラ', 120, 5));
+    this.internalStocks.set(JuiceType.REDBULL, new Juice('レッドブル', 200, 5));
+    this.internalStocks.set(JuiceType.WATER, new Juice('水', 100, 5));
   }
 
   post(money: MoneyType): number {
@@ -65,16 +67,26 @@ export class VendingMachine {
     return stocksInfo;
   }
 
-  checkBuyingCondition(juice: JuiceType): boolean {
-    const selectedJuice = this.stocks.get(juice);
-    return this.balance >= selectedJuice!.price && selectedJuice!.quantity >= 1;
+  checkBuyableDrink(juice: Juice): boolean {
+    return this.balance >= juice.price && juice.quantity >= 1;
+  }
+
+  acquireBuyableList() {
+    const buyableList: string[] = [];
+    for (const [key, value] of this.stocks) {
+      if (this.checkBuyableDrink(value)) {
+        buyableList.push(value.juiceInfo());
+      }
+    }
+
+    return buyableList;
   }
 
   buying(juice: JuiceType): number {
     const selectedJuice = this.stocks.get(juice)!;
 
-    if (this.checkBuyingCondition(juice)) {
-      this.internalStocks.get(juice)!.quantity -= 1;
+    if (this.checkBuyableDrink(selectedJuice)) {
+      selectedJuice.quantity -= 1;
       this.balance -= selectedJuice.price;
       this.earning += selectedJuice.price;
     }
