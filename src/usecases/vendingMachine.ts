@@ -76,14 +76,14 @@ export class VendingMachine {
   }
 
   acquireBuyableList() {
-    let BuyableList: string[] = [];
+    const buyableList: string[] = [];
     for (const [key, value] of this.stocks) {
       if (this.checkBuyableDrink(value)) {
-        BuyableList.push(value.juiceInfo());
+        buyableList.push(value.juiceInfo());
       }
     }
 
-    return BuyableList;
+    return buyableList;
   }
 
   buying(juice: JuiceType): number {
