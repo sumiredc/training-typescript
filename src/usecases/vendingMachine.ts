@@ -90,6 +90,6 @@ export class VendingMachine {
       this.balance -= selectedJuice.price;
       this.earning += selectedJuice.price;
     }
-    return 0;
+    return this.refund();
   }
 }
