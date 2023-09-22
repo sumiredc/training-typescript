@@ -68,11 +68,7 @@ export class VendingMachine {
   }
 
   checkBuyableDrink(juice: Juice): boolean {
-    if (this.balance >= juice.price && juice.quantity >= 1) {
-      return true;
-    } else {
-      return false;
-    }
+    return this.balance >= juice.price && juice.quantity >= 1;
   }
 
   acquireBuyableList() {
@@ -87,12 +83,12 @@ export class VendingMachine {
   }
 
   buying(juice: JuiceType): number {
-    const selectedJuice = this.stocks.get(juice);
+    const selectedJuice = this.stocks.get(juice)!;
 
-    if (this.checkBuyableDrink(selectedJuice!)) {
-      selectedJuice!.quantity -= 1;
-      this.balance -= selectedJuice!.price;
-      this.earning += selectedJuice!.price;
+    if (this.checkBuyableDrink(selectedJuice)) {
+      selectedJuice.quantity -= 1;
+      this.balance -= selectedJuice.price;
+      this.earning += selectedJuice.price;
     }
     return 0;
   }
