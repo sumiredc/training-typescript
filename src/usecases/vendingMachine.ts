@@ -11,15 +11,22 @@ const validMoney: MoneyType[] = [
 ];
 
 export class VendingMachine {
-  private internalStocks = new Map<JuiceType, Juice>();
+  private internalStocks = new Map<
+    JuiceType,
+    { juice: Juice; quantity: number }
+  >();
 
   constructor(
-    private internalBalance: number,
-    private internalEarning: number
+    private internalBalance: number = 0,
+    private internalEarning: number = 0
   ) {
-    this.internalStocks.set(JuiceType.COKE, new Juice('コーラ', 120, 5));
-    this.internalStocks.set(JuiceType.REDBULL, new Juice('レッドブル', 200, 5));
-    this.internalStocks.set(JuiceType.WATER, new Juice('水', 100, 5));
+    this.addStock(JuiceType.COKE, new Juice('コーラ', 120), 5);
+    this.addStock(JuiceType.REDBULL, new Juice('レッドブル', 200), 5);
+    this.addStock(JuiceType.WATER, new Juice('水', 100), 5);
+  }
+
+  addStock(juiceType: JuiceType, juice: Juice, quantity: number) {
+    this.internalStocks.set(juiceType, { juice, quantity });
   }
 
   post(money: MoneyType): number {
@@ -59,34 +66,43 @@ export class VendingMachine {
 
   stocksInfo() {
     const stocksInfo: string[] = [];
-    for (const [key, value] of this.internalStocks) {
-      stocksInfo.push(value.juiceInfo());
+    for (const [_, stock] of this.internalStocks) {
+      stocksInfo.push(this.makeStockInfoRow(stock.juice, stock.quantity));
     }
     return stocksInfo;
   }
 
-  checkBuyableDrink(juice: Juice): boolean {
-    return this.balance >= juice.price && juice.quantity >= 1;
+  private makeStockInfoRow(juice: Juice, quantity: number) {
+    return juice.juiceInfo() + ` stock:${quantity}本`;
+  }
+
+  checkBuyableDrink(juiceType: JuiceType): boolean {
+    if (!this.stocks.has(juiceType)) {
+      return false;
+    } else {
+      const { juice, quantity } = this.stocks.get(juiceType)!;
+      return this.balance >= juice.price && quantity >= 1;
+    }
   }
 
   acquireBuyableList() {
     const buyableList: string[] = [];
-    for (const [key, value] of this.stocks) {
-      if (this.checkBuyableDrink(value)) {
-        buyableList.push(value.juiceInfo());
+    for (const [juiceType, stock] of this.stocks) {
+      if (this.checkBuyableDrink(juiceType)) {
+        buyableList.push(this.makeStockInfoRow(stock.juice, stock.quantity));
       }
     }
 
     return buyableList;
   }
 
-  buying(juice: JuiceType): number {
-    const selectedJuice = this.stocks.get(juice)!;
+  buying(juiceType: JuiceType): number {
+    const { juice, quantity } = this.stocks.get(juiceType)!;
 
-    if (this.checkBuyableDrink(selectedJuice)) {
-      selectedJuice.quantity -= 1;
-      this.balance -= selectedJuice.price;
-      this.earning += selectedJuice.price;
+    if (this.checkBuyableDrink(juiceType)) {
+      this.stocks.set(juiceType, { juice, quantity: quantity - 1 });
+      this.balance -= juice.price;
+      this.earning += juice.price;
     }
     return this.refund();
   }

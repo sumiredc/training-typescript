@@ -8,7 +8,7 @@ describe('vendingMachine', () => {
   beforeEach(() => {
     // テスト前にVendingMachineのインスタンスを作成する
 
-    vm = new VendingMachine(0, 0);
+    vm = new VendingMachine();
   });
 
   it('10円を投入', () => {
