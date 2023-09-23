@@ -33,6 +33,7 @@ export class VendingMachine {
     });
   }
 
+  // お金を入れる
   post(money: MoneyType): number {
     if (validMoney.includes(money)) {
       this.internalBalance += money;
@@ -42,6 +43,7 @@ export class VendingMachine {
     }
   }
 
+  // 投入された合計金額
   get balance(): number {
     return this.internalBalance;
   }
@@ -50,6 +52,7 @@ export class VendingMachine {
     this.internalBalance = balance;
   }
 
+  // 売上
   get earning(): number {
     return this.internalEarning;
   }
@@ -58,6 +61,7 @@ export class VendingMachine {
     this.internalEarning = earning;
   }
 
+  // 返金する
   refund(): number {
     const change: number = this.internalBalance;
     this.internalBalance = 0;
@@ -82,8 +86,8 @@ export class VendingMachine {
     return juice.juiceInfo() + ` stock:${quantity}本`;
   }
 
+  // 指定したドリンクが購入できるか判定する
   checkBuyableDrink(juiceType: JuiceType): boolean {
-    // 指定したドリンクが販売されているかの確認
     if (!this.internalStocks.has(juiceType)) {
       return false;
     }
@@ -104,6 +108,7 @@ export class VendingMachine {
     return buyableList;
   }
 
+  // 購入
   buying(juiceType: JuiceType): number {
     const { juice, quantity } = this.stocks.get(juiceType)!;
 
