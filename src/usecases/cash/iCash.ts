@@ -6,4 +6,6 @@ export interface ICash {
   get earning(): number;
 
   set earning(earning: number);
+
+  checkMoneyCondition(price: number): boolean;
 }
