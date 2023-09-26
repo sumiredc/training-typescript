@@ -1,1 +1,0 @@
-import {VendingMachine} from './vendingMachine';

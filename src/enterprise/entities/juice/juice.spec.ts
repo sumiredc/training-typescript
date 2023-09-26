@@ -1,4 +1,4 @@
-import { Juice } from '../../domain/entities/juice';
+import { Juice } from './juice';
 
 describe('vendingMachine', () => {
   let ju!: Juice;
@@ -9,6 +9,6 @@ describe('vendingMachine', () => {
   });
 
   it('ジュースクラスの情報を取得', () => {
-    expect(ju.juiceInfo()).toBe('name:コーラ price:￥120');
+    expect(ju.jpy).toBe('￥120');
   });
 });
