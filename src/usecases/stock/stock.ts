@@ -8,8 +8,9 @@ export class Stock implements IStock {
     { juice: Juice; quantity: number }
   >();
 
-  addStock(juiceType: JuiceType, juice: Juice, quantity: number) {
-    this.internalStocks.set(juiceType, { juice, quantity });
+  addStock(juice: Juice, quantity: number) {
+    this.internalStocks.set(juice.type, { juice, quantity });
+    return this.stocks.has(juice.type);
   }
 
   get stocks() {

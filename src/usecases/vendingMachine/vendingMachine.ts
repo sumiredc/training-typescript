@@ -19,27 +19,15 @@ export class VendingMachine implements IVendingMachine {
 
   constructor() {
     this.Stock.addStock(
-      JuiceType.COKE,
-      new Juice(
-        JuiceData[JuiceType.COKE].name,
-        JuiceData[JuiceType.COKE].price
-      ),
+      new Juice(JuiceType.COKE, JuiceData[JuiceType.COKE].price),
       5
     );
     this.Stock.addStock(
-      JuiceType.REDBULL,
-      new Juice(
-        JuiceData[JuiceType.REDBULL].name,
-        JuiceData[JuiceType.REDBULL].price
-      ),
+      new Juice(JuiceType.REDBULL, JuiceData[JuiceType.REDBULL].price),
       5
     );
     this.Stock.addStock(
-      JuiceType.WATER,
-      new Juice(
-        JuiceData[JuiceType.WATER].name,
-        JuiceData[JuiceType.WATER].price
-      ),
+      new Juice(JuiceType.WATER, JuiceData[JuiceType.WATER].price),
       5
     );
   }
@@ -71,5 +59,34 @@ export class VendingMachine implements IVendingMachine {
       this.Cash.earning += juice.price;
     }
     return this.refund();
+  }
+
+  checkStockCondition(juiceType: JuiceType): boolean {
+    if (!this.Stock.stocks.has(juiceType)) {
+      return false;
+    } else {
+      const { juice, quantity } = this.Stock.stocks.get(juiceType)!;
+      return quantity >= 1;
+    }
+  }
+
+  checkMoneyCondition(price: number): boolean {
+    return this.Cash.balance >= price;
+  }
+
+  acquireBuyableList(
+    stocks: Map<JuiceType, { juice: Juice; quantity: number }>
+  ) {
+    const buyableList: Juice[] = [];
+    for (const [juiceType, stock] of stocks) {
+      if (
+        this.checkStockCondition(juiceType) &&
+        this.checkMoneyCondition(stock.juice.price)
+      ) {
+        buyableList.push(stock.juice);
+      }
+    }
+
+    return buyableList;
   }
 }

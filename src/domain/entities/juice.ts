@@ -1,45 +1,30 @@
+import { JuiceData, JuiceType } from '../objects/juiceType';
+
 export class Juice {
   constructor(
-    private internalName: string,
-    private internalPrice: number // private internalQuantity: number
+    private internalType: JuiceType,
+    private internalPrice: number
   ) {}
 
-  get name(): string {
-    return this.internalName;
+  get type(): JuiceType {
+    return this.internalType;
   }
 
   get price(): number {
     return this.internalPrice;
   }
 
-  // get quantity(): number {
-  //   return this.internalQuantity;
-  // }
-
-  set name(name: string) {
-    this.internalName = name;
+  set type(type: JuiceType) {
+    this.internalType = type;
   }
 
   set price(price: number) {
     this.internalPrice = price;
   }
-
-  // set quantity(quantity: number) {
-  //   this.internalQuantity = quantity;
-  // }
-
-  juiceInfo(): string {
-    return (
-      'name:' +
-      this.name +
-      ' price:' +
-      new Intl.NumberFormat('ja-JP', {
-        style: 'currency',
-        currency: 'JPY',
-      }).format(this.price)
-      // ' stock:'
-      // this.internalQuantity +
-      // '本'
-    );
-  }
 }
+
+export type JuiceInfo = {
+  name: string;
+  price: number;
+  stock: number;
+};
