@@ -1,5 +1,5 @@
 import { Juice } from '../../domain/entities/juice';
-import { JuiceType } from '../../domain/objects/juiceType';
+import { JuiceData, JuiceType } from '../../domain/objects/juiceType';
 import { MoneyType } from '../../domain/objects/moneyType';
 import { IVendingMachine } from './iVendingMachine';
 import { Cash } from '../cash/cash';
@@ -18,9 +18,30 @@ export class VendingMachine implements IVendingMachine {
   Stock = new Stock();
 
   constructor() {
-    this.Stock.addStock(JuiceType.COKE, new Juice('コーラ', 120), 5);
-    this.Stock.addStock(JuiceType.REDBULL, new Juice('レッドブル', 200), 5);
-    this.Stock.addStock(JuiceType.WATER, new Juice('水', 100), 5);
+    this.Stock.addStock(
+      JuiceType.COKE,
+      new Juice(
+        JuiceData[JuiceType.COKE].name,
+        JuiceData[JuiceType.COKE].price
+      ),
+      5
+    );
+    this.Stock.addStock(
+      JuiceType.REDBULL,
+      new Juice(
+        JuiceData[JuiceType.REDBULL].name,
+        JuiceData[JuiceType.REDBULL].price
+      ),
+      5
+    );
+    this.Stock.addStock(
+      JuiceType.WATER,
+      new Juice(
+        JuiceData[JuiceType.WATER].name,
+        JuiceData[JuiceType.WATER].price
+      ),
+      5
+    );
   }
 
   post(money: MoneyType): number {
