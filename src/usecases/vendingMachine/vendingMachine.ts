@@ -3,7 +3,7 @@ import { JuiceData, JuiceType } from '../../domain/objects/juiceType';
 import { MoneyType } from '../../domain/objects/moneyType';
 import { IVendingMachine } from './iVendingMachine';
 import { Cash } from '../cash/cash';
-import { Stock } from '../stock/stock';
+import { Stock, StockRow } from '../stock/stock';
 
 const validMoney: MoneyType[] = [
   MoneyType.TEN,
@@ -14,27 +14,29 @@ const validMoney: MoneyType[] = [
 ];
 
 export class VendingMachine implements IVendingMachine {
-  Cash = new Cash();
-  Stock = new Stock();
+  constructor(
+    private readonly internalCash: Cash = new Cash(),
+    private readonly internalStock: Stock = new Stock()
+  ) {
+    this.initStock();
+  }
 
-  constructor() {
-    this.Stock.addStock(
-      new Juice(JuiceType.COKE, JuiceData[JuiceType.COKE].price),
-      5
-    );
-    this.Stock.addStock(
-      new Juice(JuiceType.REDBULL, JuiceData[JuiceType.REDBULL].price),
-      5
-    );
-    this.Stock.addStock(
-      new Juice(JuiceType.WATER, JuiceData[JuiceType.WATER].price),
-      5
-    );
+  get cash(): Cash {
+    return this.internalCash;
+  }
+
+  get stock(): Stock {
+    return this.internalStock;
+  }
+  private initStock() {
+    this.stock.add(new Juice(JuiceType.COKE, 120), 5);
+    this.stock.add(new Juice(JuiceType.REDBULL, 200), 5);
+    this.stock.add(new Juice(JuiceType.WATER, 100), 5);
   }
 
   post(money: MoneyType): number {
     if (validMoney.includes(money)) {
-      this.Cash.balance += money;
+      this.cash.balance += money;
       return 0;
     } else {
       return money;
@@ -42,49 +44,39 @@ export class VendingMachine implements IVendingMachine {
   }
 
   refund(): number {
-    const change: number = this.Cash.balance;
-    this.Cash.balance = 0;
+    const change: number = this.cash.balance;
+    this.cash.balance = 0;
     return change;
   }
 
   buying(juiceType: JuiceType): number {
-    const { juice, quantity } = this.Stock.stocks.get(juiceType)!;
+    const { juice, quantity } = this.stock.stocks.get(juiceType)!;
 
-    if (
-      this.Stock.checkStockCondition(juiceType) &&
-      this.Cash.checkMoneyCondition(juice.price)
-    ) {
-      this.Stock.stocks.set(juiceType, { juice, quantity: quantity - 1 });
-      this.Cash.balance -= juice.price;
-      this.Cash.earning += juice.price;
+    if (this.isBuyableJuice(juiceType) && this.overEqualBalance(juice.price)) {
+      this.stock.stocks.set(juiceType, { juice, quantity: quantity - 1 });
+      this.cash.balance -= juice.price;
+      this.cash.earning += juice.price;
     }
     return this.refund();
   }
 
-  checkStockCondition(juiceType: JuiceType): boolean {
-    if (!this.Stock.stocks.has(juiceType)) {
-      return false;
-    } else {
-      const { juice, quantity } = this.Stock.stocks.get(juiceType)!;
-      return quantity >= 1;
-    }
+  isBuyableJuice(juiceType: JuiceType): boolean {
+    const quantity = this.stock.getStockQuantity(juiceType);
+    return quantity > 0;
   }
 
-  checkMoneyCondition(price: number): boolean {
-    return this.Cash.balance >= price;
+  overEqualBalance(price: number): boolean {
+    return this.cash.balance >= price;
   }
 
   acquireBuyableList(
-    stocks: Map<JuiceType, { juice: Juice; quantity: number }>
-  ): Map<JuiceType, { juice: Juice; quantity: number }> {
-    const buyableList = new Map<
-      JuiceType,
-      { juice: Juice; quantity: number }
-    >();
+    stocks: Map<JuiceType, StockRow>
+  ): Map<JuiceType, StockRow> {
+    const buyableList = new Map<JuiceType, StockRow>();
     for (const [juiceType, stock] of stocks) {
       if (
-        this.checkStockCondition(juiceType) &&
-        this.checkMoneyCondition(stock.juice.price)
+        this.isBuyableJuice(juiceType) &&
+        this.overEqualBalance(stock.juice.price)
       ) {
         buyableList.set(juiceType, {
           juice: stock.juice,

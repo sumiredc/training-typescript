@@ -3,6 +3,5 @@ import { JuiceType } from '../../domain/objects/juiceType';
 
 export interface IStock {
   get stocks(): Map<JuiceType, { juice: Juice; quantity: number }>;
-  addStock(juice: Juice, quantity: number): void;
-  checkStockCondition(juiceType: JuiceType): boolean;
+  add(juice: Juice, quantity: number): void;
 }

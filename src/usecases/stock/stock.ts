@@ -2,13 +2,18 @@ import { Juice } from '../../domain/entities/juice';
 import { JuiceType, JuiceData } from '../../domain/objects/juiceType';
 import { IStock } from './iStock';
 
+export type StockRow = {
+  juice: Juice;
+  quantity: number;
+};
+
 export class Stock implements IStock {
   private internalStocks = new Map<
     JuiceType,
     { juice: Juice; quantity: number }
   >();
 
-  addStock(juice: Juice, quantity: number) {
+  add(juice: Juice, quantity: number) {
     this.internalStocks.set(juice.type, { juice, quantity });
     return this.stocks.has(juice.type);
   }
@@ -17,12 +22,13 @@ export class Stock implements IStock {
     return this.internalStocks;
   }
 
-  checkStockCondition(juiceType: JuiceType): boolean {
+  getStockQuantity(juiceType: JuiceType): number {
     if (!this.stocks.has(juiceType)) {
-      return false;
-    } else {
-      const { juice, quantity } = this.stocks.get(juiceType)!;
-      return quantity >= 1;
+      return 0;
     }
+    return this.stocks.get(juiceType)!.quantity;
+  }
+  getStockJuice(juiceType: JuiceType): Juice {
+    return this.stocks.get(juiceType)!.juice;
   }
 }

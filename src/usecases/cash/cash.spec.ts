@@ -17,10 +17,4 @@ describe('cash', () => {
     c.earning = 150;
     expect(c.earning).toBe(150);
   });
-
-  it('金額のチェックを行う', () => {
-    c.balance = 150;
-    expect(c.balance).toBe(150);
-    expect(c.checkMoneyCondition(100)).toEqual(true);
-  });
 });

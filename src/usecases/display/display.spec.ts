@@ -13,8 +13,7 @@ describe('display', () => {
     s = new Stock();
   });
   it('ジュースの情報を取得する', () => {
-    const coke = new Juice(JuiceType.COKE, JuiceData[JuiceType.COKE].price);
-    expect(d.makeJuiceInfo(coke, 5)).toEqual({
+    expect(d.makeJuiceInfo(new Juice(JuiceType.COKE, 120), 5)).toEqual({
       name: 'コーラ',
       price: 120,
       stock: 5,
@@ -22,29 +21,23 @@ describe('display', () => {
   });
 
   it('自販機内に格納される飲み物の情報を取得する', () => {
-    const coke = new Juice(JuiceType.COKE, JuiceData[JuiceType.COKE].price);
-    const redbull = new Juice(
-      JuiceType.REDBULL,
-      JuiceData[JuiceType.REDBULL].price
-    );
-    const water = new Juice(JuiceType.WATER, JuiceData[JuiceType.WATER].price);
-    s.addStock(coke, 5);
-    s.addStock(redbull, 5);
-    s.addStock(water, 5);
+    s.add(new Juice(JuiceType.COKE, 120), 5);
+    s.add(new Juice(JuiceType.REDBULL, 200), 5);
+    s.add(new Juice(JuiceType.WATER, 100), 5);
     expect(d.stocksInfo(s.stocks)).toEqual([
       {
         name: JuiceData[JuiceType.COKE].name,
-        price: JuiceData[JuiceType.COKE].price,
+        price: 120,
         stock: 5,
       },
       {
         name: JuiceData[JuiceType.REDBULL].name,
-        price: JuiceData[JuiceType.REDBULL].price,
+        price: 200,
         stock: 5,
       },
       {
         name: JuiceData[JuiceType.WATER].name,
-        price: JuiceData[JuiceType.WATER].price,
+        price: 100,
         stock: 5,
       },
     ]);

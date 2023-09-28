@@ -19,8 +19,4 @@ export class Cash implements ICash {
   set earning(earning: number) {
     this.internalEarning = earning;
   }
-
-  checkMoneyCondition(price: number): boolean {
-    return this.balance >= price;
-  }
 }
