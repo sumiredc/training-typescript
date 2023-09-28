@@ -10,5 +10,5 @@ export interface IVendingMachine {
   checkMoneyCondition(price: number): boolean;
   acquireBuyableList(
     stocks: Map<JuiceType, { juice: Juice; quantity: number }>
-  ): Juice[];
+  ): Map<JuiceType, { juice: Juice; quantity: number }>;
 }

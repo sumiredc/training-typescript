@@ -76,14 +76,20 @@ export class VendingMachine implements IVendingMachine {
 
   acquireBuyableList(
     stocks: Map<JuiceType, { juice: Juice; quantity: number }>
-  ) {
-    const buyableList: Juice[] = [];
+  ): Map<JuiceType, { juice: Juice; quantity: number }> {
+    const buyableList = new Map<
+      JuiceType,
+      { juice: Juice; quantity: number }
+    >();
     for (const [juiceType, stock] of stocks) {
       if (
         this.checkStockCondition(juiceType) &&
         this.checkMoneyCondition(stock.juice.price)
       ) {
-        buyableList.push(stock.juice);
+        buyableList.set(juiceType, {
+          juice: stock.juice,
+          quantity: stock.quantity,
+        });
       }
     }
 
