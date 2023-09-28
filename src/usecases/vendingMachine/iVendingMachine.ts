@@ -6,8 +6,8 @@ export interface IVendingMachine {
   post(money: MoneyType): number;
   refund(): number;
   buying(juiceType: JuiceType): number;
-  checkStockCondition(juiceType: JuiceType): boolean;
-  checkMoneyCondition(price: number): boolean;
+  isBuyableJuice(juiceType: JuiceType): boolean;
+  overEqualBalance(price: number): boolean;
   acquireBuyableList(
     stocks: Map<JuiceType, { juice: Juice; quantity: number }>
   ): Map<JuiceType, { juice: Juice; quantity: number }>;
