@@ -8,7 +8,7 @@ export class Display implements IDisplay {
   makeJuiceInfo(juice: Juice, quantity: number) {
     const juiceInfo: JuiceInfo = {
       name: JuiceData[juice.type].name,
-      price: JuiceData[juice.type].price,
+      price: juice.price,
       stock: quantity,
     };
     return juiceInfo;

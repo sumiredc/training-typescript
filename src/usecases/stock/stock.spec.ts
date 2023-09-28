@@ -11,23 +11,17 @@ describe('stock', () => {
   });
 
   it('在庫を追加', () => {
-    const juice = new Juice(JuiceType.COKE, JuiceData[JuiceType.COKE].price);
+    const juice = new Juice(JuiceType.COKE, 120);
 
-    expect(s.addStock(juice, 5)).toBe(true);
+    expect(s.add(juice, 5)).toBe(true);
   });
 
   it('在庫を取得する', () => {
-    const juice = new Juice(JuiceType.COKE, JuiceData[JuiceType.COKE].price);
+    const juice = new Juice(JuiceType.COKE, 120);
 
-    s.addStock(juice, 5);
+    s.add(juice, 5);
     expect(s.stocks).toEqual(
       new Map([[JuiceType.COKE, { juice, quantity: 5 }]])
     );
-  });
-
-  it('在庫をチェックする', () => {
-    const juice = new Juice(JuiceType.COKE, JuiceData[JuiceType.COKE].price);
-    s.addStock(juice, 5);
-    expect(s.checkStockCondition(JuiceType.COKE)).toBe(true);
   });
 });

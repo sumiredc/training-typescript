@@ -5,7 +5,7 @@ export enum JuiceType {
 }
 
 export const JuiceData = {
-  0: { name: 'コーラ', price: 120 },
-  1: { name: 'レッドブル', price: 200 },
-  2: { name: '水', price: 100 },
+  0: { name: 'コーラ' },
+  1: { name: 'レッドブル' },
+  2: { name: '水' },
 };
