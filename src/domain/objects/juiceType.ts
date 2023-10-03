@@ -4,7 +4,7 @@ export enum JuiceType {
   WATER = 2,
 }
 
-const data = {
+export const JuiceData = {
   0: { name: 'コーラ' },
   1: { name: 'レッドブル' },
   2: { name: '水' },

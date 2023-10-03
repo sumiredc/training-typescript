@@ -1,9 +1,9 @@
-import { Juice } from '../../domain/entities/juice';
-import { JuiceType } from '../../domain/objects/juiceType';
+import { Juice, JuiceInfo } from '../../domain/entities/juice';
+import { JuiceData, JuiceType } from '../../domain/objects/juiceType';
 import { MoneyType } from '../../domain/objects/moneyType';
 import { IVendingMachine } from './iVendingMachine';
 import { Cash } from '../cash/cash';
-import { Stock } from '../stock/stock';
+import { Stock, StockRow } from '../stock/stock';
 
 const validMoney: MoneyType[] = [
   MoneyType.TEN,
@@ -14,41 +14,69 @@ const validMoney: MoneyType[] = [
 ];
 
 export class VendingMachine implements IVendingMachine {
-  Cash = new Cash();
-  Stock = new Stock();
+  constructor(
+    private readonly internalCash: Cash = new Cash(),
+    private readonly internalStock: Stock = new Stock()
+  ) {
+    this.initStock();
+  }
 
-  constructor() {
-    this.Stock.addStock(JuiceType.COKE, new Juice('コーラ', 120), 5);
-    this.Stock.addStock(JuiceType.REDBULL, new Juice('レッドブル', 200), 5);
-    this.Stock.addStock(JuiceType.WATER, new Juice('水', 100), 5);
+  get cash(): Cash {
+    return this.internalCash;
+  }
+
+  get stock(): Stock {
+    return this.internalStock;
+  }
+  private initStock() {
+    this.stock.add(new Juice(JuiceType.COKE, 120), 5);
+    this.stock.add(new Juice(JuiceType.REDBULL, 200), 5);
+    this.stock.add(new Juice(JuiceType.WATER, 100), 5);
   }
 
   post(money: MoneyType): number {
     if (validMoney.includes(money)) {
-      this.Cash.balance += money;
+      this.cash.addBalance(money);
       return 0;
-    } else {
-      return money;
     }
+    return money;
   }
 
   refund(): number {
-    const change: number = this.Cash.balance;
-    this.Cash.balance = 0;
+    const change: number = this.cash.balance;
+    this.cash.resetBalance();
     return change;
   }
 
-  buying(juiceType: JuiceType): number {
-    const { juice, quantity } = this.Stock.stocks.get(juiceType)!;
-
-    if (
-      this.Stock.checkStockCondition(juiceType) &&
-      this.Cash.checkMoneyCondition(juice.price)
-    ) {
-      this.Stock.stocks.set(juiceType, { juice, quantity: quantity - 1 });
-      this.Cash.balance -= juice.price;
-      this.Cash.earning += juice.price;
+  buying(juiceType: JuiceType): boolean {
+    if (!this.stock.hasStock(juiceType)) {
+      throw new Error('指定されたジュースは存在しません');
     }
-    return this.refund();
+    if (!this.isBuyableJuice(juiceType, this.cash.balance)) {
+      return false;
+    }
+    const juice = this.stock.getStockJuice(juiceType)!;
+    this.stock.sub(juiceType);
+    this.cash.subBalance(juice.price);
+    this.cash.addEarning(juice.price);
+
+    return true;
+  }
+
+  private isBuyableJuice(juiceType: JuiceType, balance: number): boolean {
+    return (
+      this.stock.isNotSoldOut(juiceType) &&
+      this.stock.isOverEqualPrice(juiceType, balance)
+    );
+  }
+
+  acquireBuyableList(stocks: Map<JuiceType, StockRow>): JuiceInfo[] {
+    const buyableList: JuiceInfo[] = [];
+    stocks.forEach(({ juice, quantity }, juiceType) => {
+      if (this.isBuyableJuice(juiceType, this.cash.balance)) {
+        buyableList.push({ name: juice.name, price: juice.price, quantity });
+      }
+    });
+    return buyableList;
   }
 }
