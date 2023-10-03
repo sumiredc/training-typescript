@@ -1,5 +1,5 @@
-import { Juice } from '../../domain/entities/juice';
-import { JuiceType } from '../../domain/objects/juiceType';
+import { Juice, JuiceInfo } from '../../domain/entities/juice';
+import { JuiceData, JuiceType } from '../../domain/objects/juiceType';
 import { MoneyType } from '../../domain/objects/moneyType';
 import { IVendingMachine } from './iVendingMachine';
 import { Cash } from '../cash/cash';
@@ -36,55 +36,47 @@ export class VendingMachine implements IVendingMachine {
 
   post(money: MoneyType): number {
     if (validMoney.includes(money)) {
-      this.cash.balance += money;
+      this.cash.addBalance(money);
       return 0;
-    } else {
-      return money;
     }
+    return money;
   }
 
   refund(): number {
     const change: number = this.cash.balance;
-    this.cash.balance = 0;
+    this.cash.resetBalance();
     return change;
   }
 
-  buying(juiceType: JuiceType): number {
-    const { juice, quantity } = this.stock.stocks.get(juiceType)!;
-
-    if (this.isBuyableJuice(juiceType) && this.overEqualBalance(juice.price)) {
-      this.stock.stocks.set(juiceType, { juice, quantity: quantity - 1 });
-      this.cash.balance -= juice.price;
-      this.cash.earning += juice.price;
+  buying(juiceType: JuiceType): boolean {
+    if (!this.stock.hasStock(juiceType)) {
+      throw new Error('指定されたジュースは存在しません');
     }
-    return this.refund();
+    if (!this.isBuyableJuice(juiceType, this.cash.balance)) {
+      return false;
+    }
+    const juice = this.stock.getStockJuice(juiceType)!;
+    this.stock.sub(juiceType);
+    this.cash.subBalance(juice.price);
+    this.cash.addEarning(juice.price);
+
+    return true;
   }
 
-  isBuyableJuice(juiceType: JuiceType): boolean {
-    const quantity = this.stock.getStockQuantity(juiceType);
-    return quantity > 0;
+  private isBuyableJuice(juiceType: JuiceType, balance: number): boolean {
+    return (
+      this.stock.isNotSoldOut(juiceType) &&
+      this.stock.isOverEqualPrice(juiceType, balance)
+    );
   }
 
-  overEqualBalance(price: number): boolean {
-    return this.cash.balance >= price;
-  }
-
-  acquireBuyableList(
-    stocks: Map<JuiceType, StockRow>
-  ): Map<JuiceType, StockRow> {
-    const buyableList = new Map<JuiceType, StockRow>();
-    for (const [juiceType, stock] of stocks) {
-      if (
-        this.isBuyableJuice(juiceType) &&
-        this.overEqualBalance(stock.juice.price)
-      ) {
-        buyableList.set(juiceType, {
-          juice: stock.juice,
-          quantity: stock.quantity,
-        });
+  acquireBuyableList(stocks: Map<JuiceType, StockRow>): JuiceInfo[] {
+    const buyableList: JuiceInfo[] = [];
+    stocks.forEach(({ juice, quantity }, juiceType) => {
+      if (this.isBuyableJuice(juiceType, this.cash.balance)) {
+        buyableList.push({ name: juice.name, price: juice.price, quantity });
       }
-    }
-
+    });
     return buyableList;
   }
 }

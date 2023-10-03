@@ -6,16 +6,15 @@ export class Juice {
     private internalPrice: number
   ) {}
 
+  get name(): string {
+    return JuiceData[this.type].name;
+  }
   get type(): JuiceType {
     return this.internalType;
   }
 
   get price(): number {
     return this.internalPrice;
-  }
-
-  set type(type: JuiceType) {
-    this.internalType = type;
   }
 
   set price(price: number) {
@@ -26,5 +25,5 @@ export class Juice {
 export type JuiceInfo = {
   name: string;
   price: number;
-  stock: number;
+  quantity: number;
 };
