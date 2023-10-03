@@ -1,5 +1,5 @@
 import { Juice } from '../../domain/entities/juice';
-import { JuiceData, JuiceType } from '../../domain/objects/juiceType';
+import { JuiceType } from '../../domain/objects/juiceType';
 import { MoneyType } from '../../domain/objects/moneyType';
 import { IVendingMachine } from './iVendingMachine';
 import { Cash } from '../cash/cash';
