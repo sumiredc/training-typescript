@@ -1,6 +1,4 @@
 import { IDisplay } from './iDisplay';
-import { Stock } from '../stock/stock';
-import { Cash } from '../cash/cash';
 import { JuiceData, JuiceType } from '../../domain/objects/juiceType';
 import { Juice, JuiceInfo } from '../../domain/entities/juice';
 
