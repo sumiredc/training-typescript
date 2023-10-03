@@ -6,7 +6,6 @@ export interface IVendingMachine {
   post(money: MoneyType): number;
   refund(): number;
   buying(juiceType: JuiceType): boolean;
-
   acquireBuyableList(
     stocks: Map<JuiceType, { juice: Juice; quantity: number }>
   ): JuiceInfo[];
