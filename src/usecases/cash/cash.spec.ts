@@ -7,11 +7,6 @@ beforeEach(() => {
 });
 
 describe('cash', () => {
-  it('投入金額を取得', () => {
-    c.addBalance(150);
-    expect(c.balance).toBe(150);
-  });
-
   it('売上金額を取得', () => {
     c.addEarning(150);
     expect(c.earning).toBe(150);

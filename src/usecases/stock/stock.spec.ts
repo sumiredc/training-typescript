@@ -3,30 +3,33 @@ import { JuiceType } from '../../domain/objects/juiceType';
 import { Stock } from './stock';
 
 let s!: Stock;
-let coke!: Juice;
-let redBull!: Juice;
-let water!: Juice;
+const coke: Juice = new Juice(JuiceType.COKE, 120);
+const redBull = new Juice(JuiceType.REDBULL, 200);
+const water = new Juice(JuiceType.WATER, 100);
 
 beforeEach(() => {
   // テスト前にstockのインスタンスを作成する
   s = new Stock();
-  coke = new Juice(JuiceType.COKE, 120);
-  redBull = new Juice(JuiceType.REDBULL, 200);
-  water = new Juice(JuiceType.WATER, 100);
   s.add(coke, 5);
 });
 
 describe.each([
   [redBull, 5, true],
   [water, 5, true],
-])('在庫を追加', (x: Juice, n: number, expected: boolean) => {
-  it(`add ${x} ${n}`, () => {
-    expect(s.add(x, n)).toBe(expected);
+])('在庫を追加', (juice: Juice, n: number, expected: boolean) => {
+  it(`add ${juice} ${n}`, () => {
+    expect(s.add(juice, n)).toBe(expected);
   });
 });
 
 it('在庫を減らす', () => {
   expect(s.sub(JuiceType.COKE)).toEqual({ juice: coke, quantity: 4 });
+});
+
+it('在庫を減らす（無効）', () => {
+  expect(() => s.sub(JuiceType.REDBULL)).toThrow(
+    '指定されたジュースは存在しません'
+  );
 });
 
 it('在庫を取得する', () => {
