@@ -7,7 +7,7 @@ export class Display implements IDisplay {
     const juiceInfo: JuiceInfo = {
       name: JuiceData[juice.type].name,
       price: juice.price,
-      stock: quantity,
+      quantity: quantity,
     };
     return juiceInfo;
   }

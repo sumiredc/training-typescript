@@ -8,4 +8,8 @@ describe('juice', () => {
     // テスト前にJuiceのインスタンスを作成する
     ju = new Juice(JuiceType.COKE, 120);
   });
+
+  it('名前を取得', () => {
+    expect(ju.name).toBe('コーラ');
+  });
 });
