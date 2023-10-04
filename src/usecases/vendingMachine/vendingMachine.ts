@@ -63,7 +63,7 @@ export class VendingMachine implements IVendingMachine {
     return true;
   }
 
-  private isBuyableJuice(juiceType: JuiceType, balance: number): boolean {
+  isBuyableJuice(juiceType: JuiceType, balance: number): boolean {
     return (
       this.stock.isNotSoldOut(juiceType) &&
       this.stock.isOverEqualPrice(juiceType, balance)

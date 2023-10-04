@@ -1,5 +1,5 @@
 import { Juice } from '../../domain/entities/juice';
-import { JuiceType, JuiceData } from '../../domain/objects/juiceType';
+import { JuiceType } from '../../domain/objects/juiceType';
 import { IStock } from './iStock';
 
 export type StockRow = {

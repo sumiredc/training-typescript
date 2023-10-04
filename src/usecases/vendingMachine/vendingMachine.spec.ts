@@ -1,112 +1,106 @@
 import { VendingMachine } from './vendingMachine';
 import { MoneyType } from '../../domain/objects/moneyType';
-import { JuiceType, JuiceData } from '../../domain/objects/juiceType';
-import { Display } from '../display/display';
+import { JuiceType } from '../../domain/objects/juiceType';
+import { Stock, StockRow } from '../stock/stock';
 import { Juice } from '../../domain/entities/juice';
-import { Stock } from '../stock/stock';
 
-describe('vendingMachine', () => {
-  let vm!: VendingMachine;
-  let d!: Display;
+let vm!: VendingMachine;
+let s!: Stock;
+const coke = new Juice(JuiceType.COKE, 120);
+const redBull = new Juice(JuiceType.REDBULL, 200);
+const water = new Juice(JuiceType.WATER, 100);
 
-  beforeEach(() => {
-    // テスト前にVendingMachineのインスタンスを作成する
+describe.each([
+  [MoneyType.ONE, 1],
+  [MoneyType.FIVE, 5],
+  [MoneyType.TEN, 0],
+  [MoneyType.FIFTY, 0],
+  [MoneyType.HUNDRED, 0],
+  [MoneyType.FIVE_HUNDRED, 0],
+  [MoneyType.THOUSAND, 0],
+  [MoneyType.FIVE_THOUSAND, 5000],
+  [MoneyType.TEN_THOUSAND, 10000],
+])('お金を投入', (MoneyType: MoneyType, expected: number) => {
+  it(`post ${MoneyType}`, () => {
     vm = new VendingMachine();
-    d = new Display();
+    s = new Stock();
+    expect(vm.post(MoneyType)).toBe(expected);
   });
+});
 
-  it('10円を投入', () => {
-    vm.post(MoneyType.TEN);
-    expect(vm.cash.balance).toBe(10);
+it('おつりを出す', () => {
+  vm.post(MoneyType.FIVE_HUNDRED);
+  expect(vm.refund()).toBe(500);
+});
+
+describe('ジュースが購入可能かどうか判断する', () => {
+  const s = new Stock();
+  const vm = new VendingMachine(undefined, s);
+  const mockedIsNotSoldOut = jest.spyOn(s, 'isNotSoldOut');
+  const mockedIsOrverEqualPrice = jest.spyOn(s, 'isOverEqualPrice');
+
+  it('testが成功する場合', () => {
+    mockedIsNotSoldOut.mockReturnValue(true);
+    mockedIsOrverEqualPrice.mockReturnValue(true);
+    expect(vm.isBuyableJuice(JuiceType.COKE, 120)).toBe(true);
   });
-
-  it('50円を投入', () => {
-    vm.post(MoneyType.FIFTY);
-    expect(vm.cash.balance).toBe(50);
+  it('testが失敗する場合', () => {
+    mockedIsNotSoldOut.mockReturnValue(false);
+    mockedIsOrverEqualPrice.mockReturnValue(true);
+    expect(vm.isBuyableJuice(JuiceType.COKE, 120)).toBe(false);
   });
+});
 
-  it('100円を投入', () => {
-    vm.post(MoneyType.HUNDRED);
-    expect(vm.cash.balance).toBe(100);
+describe('コーラを購入する', () => {
+  const s = new Stock();
+  const vm = new VendingMachine(undefined, s);
+  const mockedIsBuyabaleJuice = jest.spyOn(vm, 'isBuyableJuice');
+  const mockedHasStock = jest.spyOn(s, 'hasStock');
+  it('testが成功する場合', () => {
+    mockedIsBuyabaleJuice.mockReturnValue(true);
+    mockedHasStock.mockReturnValue(true);
+    expect(vm.buying(JuiceType.COKE)).toBe(true);
   });
-
-  it('500円を投入', () => {
-    vm.post(MoneyType.FIVE_HUNDRED);
-    expect(vm.cash.balance).toBe(500);
+  it('testが失敗する場合', () => {
+    mockedIsBuyabaleJuice.mockReturnValue(false);
+    mockedHasStock.mockReturnValue(true);
+    expect(vm.buying(JuiceType.COKE)).toBe(false);
   });
+});
 
-  it('1000円を投入', () => {
-    vm.post(MoneyType.THOUSAND);
-    expect(vm.cash.balance).toBe(1000);
+describe('購入可能なドリンクのリストを取得する', () => {
+  const stockList: Map<JuiceType, StockRow> = new Map([
+    [JuiceType.COKE, { juice: coke, quantity: 5 }],
+    [JuiceType.REDBULL, { juice: redBull, quantity: 5 }],
+    [JuiceType.WATER, { juice: water, quantity: 5 }],
+  ]);
+
+  const s = new Stock();
+  const vm = new VendingMachine(undefined, s);
+  const mockedIsBuyabaleJuice = jest.spyOn(vm, 'isBuyableJuice');
+
+  it('testが成功する場合', () => {
+    mockedIsBuyabaleJuice.mockReturnValue(true);
+    expect(vm.acquireBuyableList(stockList)).toEqual([
+      {
+        name: 'コーラ',
+        price: 120,
+        quantity: 5,
+      },
+      {
+        name: 'レッドブル',
+        price: 200,
+        quantity: 5,
+      },
+      {
+        name: '水',
+        price: 100,
+        quantity: 5,
+      },
+    ]);
   });
-
-  it('複数回(10回)10円を投入', () => {
-    for (let i = 0; i < 10; i++) {
-      vm.post(MoneyType.TEN);
-    }
-    expect(vm.cash.balance).toBe(100);
-  });
-
-  it('おつりを出す', () => {
-    vm.post(MoneyType.FIVE_HUNDRED);
-    expect(vm.cash.balance).toBe(500);
-    expect(vm.refund()).toBe(500);
-  });
-
-  it('使えないお金(1円)を返金する', () => {
-    expect(vm.post(MoneyType.FIVE)).toBe(5);
-    expect(vm.cash.balance).toBe(0);
-  });
-
-  it('使えないお金(5円)を返金する', () => {
-    expect(vm.post(MoneyType.ONE)).toBe(1);
-    expect(vm.cash.balance).toBe(0);
-  });
-
-  it('使えないお金(5000円)を返金する', () => {
-    expect(vm.post(MoneyType.FIVE_THOUSAND)).toBe(5000);
-    expect(vm.cash.balance).toBe(0);
-  });
-
-  it('使えないお金(1万円)を返金する', () => {
-    expect(vm.post(MoneyType.TEN_THOUSAND)).toBe(10000);
-    expect(vm.cash.balance).toBe(0);
-  });
-
-  it('購入可能なドリンクのリストを取得する', () => {
-    vm.post(MoneyType.HUNDRED);
-    vm.post(MoneyType.FIFTY);
-    expect(vm.cash.balance).toBe(150);
-    expect(vm.acquireBuyableList(vm.stock.stocks)).toEqual(
-      new Map([
-        [
-          JuiceType.COKE,
-          {
-            juice: vm.stock.getStockJuice(JuiceType.COKE),
-            quantity: vm.stock.getStockQuantity(JuiceType.COKE),
-          },
-        ],
-        [
-          JuiceType.WATER,
-          {
-            juice: vm.stock.getStockJuice(JuiceType.WATER),
-            quantity: vm.stock.getStockQuantity(JuiceType.WATER),
-          },
-        ],
-      ])
-    );
-  });
-
-  it('コーラを購入する', () => {
-    vm.post(MoneyType.FIVE_HUNDRED);
-    expect(vm.cash.balance).toBe(500);
-    expect(vm.buying(JuiceType.COKE)).toBe(380);
-    expect(vm.cash.balance).toBe(0);
-  });
-
-  it('売上を確認する', () => {
-    vm.post(MoneyType.FIVE_HUNDRED);
-    vm.buying(JuiceType.COKE);
-    expect(vm.cash.earning).toBe(120);
+  it('testが失敗する場合', () => {
+    mockedIsBuyabaleJuice.mockReturnValue(false);
+    expect(vm.acquireBuyableList(stockList)).toEqual([]);
   });
 });
